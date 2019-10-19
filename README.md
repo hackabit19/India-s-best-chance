@@ -82,5 +82,47 @@ The purple color dots you see in the below images are malaria parasites.
 ![blood-in-wee2](https://i.imgur.com/4yUqUPk.jpg)
 
 
+# Deploying CNN model to webapp.
+
+Anvil was used to deploy trained model to webapp, But what is Anvil? Well, it is a tool to create a web interface for any Python project, using pure Python. No HTML, CSS or JavaScript is required. Images that were used to diagnose disease were saved at img.save, however the backup was saved at /backup folder for further training of current model which is triggered and corrected every week to make the model better and more accurate.
+
+```
+pip install anvil-uplink
+```
 
 
+```
+import anvil.server
+anvil.server.connect('ZDE4xxxxxxxxxxxxxxxxxxxxxxxxxxR')
+import anvil.media
+import socket
+import io
+import os
+from random import randint
+from PIL import Image
+
+
+@anvil.server.callable
+def classify_image(file):
+    rand = random.Random()
+    
+    with anvil.media.TempFile(file) as filename:
+      img = Image.open(io.BytesIO(file.get_bytes()))
+      bs = io.BytesIO()
+      #img.save(bs, format="JPEG")
+      # save image in upload 
+      img.save('/content/cell_images/upload/myphoto.png', 'PNG')
+      final_path = '/content/cell_images/upload/myphoto.png'
+      prediction = "Sick" if getPrediction(CNN, final_path) == 0 else "Healthy"
+      # save image for backup      
+      lol = str(randint(1,1000000))
+      backup_path = "/content/cell_images/backup/"+lol+".png"
+      img.save(backup_path, 'JPEG')
+      return(prediction)
+try:
+  os.remove('/content/cell_images/upload/myphoto.png')
+except:
+  pass
+```
+
+![anvil-deploy](https://i.imgur.com/AcDJSqX.png)
