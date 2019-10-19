@@ -123,7 +123,37 @@ imshow(unhealthy_im)
 xticks([]);yticks([]);
 
 ```
+Here we import all the necessary modules requried such as numpy and matplotlib. This section labels the images in datasets and segregates them into Healthy sample and Unhealthy sample.
 
+```
+import seaborn as sn
+
+sizes = np.zeros((20, 20), dtype=np.dtype(int))
+for healthy_im_fname in uninfected_cell_images:
+    if healthy_im_fname.endswith(".png"):
+        w, h = PIL.Image.open(os.path.join(root_path, "Uninfected", healthy_im_fname)).size
+        w = min(190, w)
+        h = min(190, h)
+        sizes[w // 10, h // 10] += 1
+
+for sick_im_fname in infected_cell_images:
+    if sick_im_fname.endswith(".png"):
+        w, h = PIL.Image.open(os.path.join(root_path, "Parasitized", sick_im_fname)).size
+        w = min(190, w)
+        h = min(190, h)
+        sizes[w // 10, h // 10] += 1
+
+figure(figsize=(20,15))
+df = pd.DataFrame(sizes)
+sn.heatmap(df, fmt='d', annot=True)
+xlabel("Width of image (in 10 pixel increments)")
+ylabel("Height of image (in 10 pixel increments)")
+title("Image size and shape distribution.")
+
+```
+What the above code does is create a table showing the distribution of image shapes / sizes.
+
+__________________________________________________________________________________________________
 # Deploying CNN model to webapp.
 
 Anvil was used to deploy trained model to webapp, But what is Anvil? Well, it is a tool to create a web interface for any Python project, using pure Python. No HTML, CSS or JavaScript is required. Images that were used to diagnose disease were saved at img.save, however the backup was saved at /backup folder for further training of current model which is triggered and corrected every week to make the model better and more accurate.
