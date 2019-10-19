@@ -26,8 +26,13 @@ Also the factor of time. When you give your blood to test it takes usually 2-7 d
 
 # How did we make it, and How much does it cost?
 
+The first iteration of idea came from Manu Prakash's foldscope, as good as it sounded to us the lower resolution and fixation of lens lead to chaos. The basic idea of foldscope is combining 2.6 mm lens to get a magnification of about 140x, however the resolution and magnification was very low even to identify basic diseases.
+![foldscope_blood](https://i.imgur.com/DDBlPUK.jpg)
+The second iteration of wee-scope followed by re-desiging the microscope which prove to be expensive than existing one.
 Our main focus while making Wee-Scope was to keep the quality of the product durable, Price of the product cheap and accurate which would work as effectively as a traditional microscope. 
 It can be made from something as cheap as a thick paper and something as hard as metal pipe. For Demonstration purposes, we made the wee-scope using the cardboard packing of the the Jet Brain Bottle Goodie. We even made a Wee-Scope out of the cover of the notepad given by the Hack-A-Bit.
-
+![wee-scope-paper](https://i.imgur.com/gfSQnaV.jpg)
 Our Wee-Scope consist of a tubular structure that can be made out of almost anything you can find your hands on, something as cheap as paper and something as lightweight and strong as a PVC Pipe. At one side of the tube is attached a 10x objective lens which is 2.0 mm in diameter. And another end consists of a 100x spherical Objective. 10x objective multiplied with 100x objective at a specific focal length gives us 1000x Magnification. After much trial and error we found out the perfect Focal length for this two objectives was 20 cms. Our design diagram can be seen below.
 ![wee-scope-diagram](https://i.imgur.com/E7dEqnI.jpg?1)
+
+
