@@ -247,7 +247,107 @@ class MalariaCNN(torch.nn.Module):
         return x
  ```
  Convulation is performed here, in conv1 size changes from (3, 64, 64) to (64, 64, 64)
+ 
+ ```
+ 
 
+def get_train_loader(batch_size):
+    train_loader = DataLoader(train_set, batch_size=batch_size, sampler=train_sampler, num_workers=2)
+    
+    return train_loader
+
+test_loader = DataLoader(test_set, batch_size=4, sampler=test_sampler, num_workers=2)
+val_loader = DataLoader(train_set, batch_size=128, sampler=val_sampler, num_workers=2)
+
+import torch.optim as optim
+
+def createLossAndOptimizer(net, learning_rate=0.001):
+    loss = torch.nn.CrossEntropyLoss()
+    optimizer = optim.Adam(net.parameters(), lr=learning_rate)
+    
+    return(loss, optimizer)
+```
+Data header takes in data set for loading.
+
+```
+import time
+
+def trainNet(net, batch_size, n_epochs, learning_rate):
+    
+    #Print all of the hyperparameters of the training iteration:
+    print("===== HYPERPARAMETERS =====")
+    print("batch_size=", batch_size)
+    print("epochs=", n_epochs)
+    print("learning_rate=", learning_rate)
+    print("=" * 30)
+    
+    train_loader = get_train_loader(batch_size)
+    n_batches = len(train_loader)
+    
+    loss, optimizer = createLossAndOptimizer(net, learning_rate)
+    
+    training_start_time = time.time()
+    
+    min_val_loss = 1.0
+    
+    for epoch in range(n_epochs):
+        
+        running_loss = 0.0
+        print_every = n_batches // 5 # Print 10 times total each epoch
+        start_time = time.time()
+        total_train_loss = 0
+        
+        for i, data in enumerate(train_loader, 0):
+            
+            inputs, labels = data
+            
+            #print(inputs, labels)
+            inputs, labels = Variable(togpu(inputs)), Variable(togpu(labels))
+            
+            optimizer.zero_grad()
+    
+            outputs = net(inputs)
+            loss_size = loss(outputs, labels)
+            loss_size.backward()
+            optimizer.step()
+            
+            # print(loss_size.data.item())
+            running_loss += loss_size.data.item()
+            total_train_loss += loss_size.data.item()
+            
+            if i % print_every == print_every - 1:
+                print("Epoch {}, {:d}% \t train_loss: {:.2f} took: {:.2f}s".format(
+                    epoch+1, int(100 * (i + 1) / n_batches), running_loss / print_every, time.time() - start_time
+                ))
+                
+                running_loss = 0.0
+                start_time = time.time()
+                
+        total_val_loss = 0
+        for inputs, labels in val_loader:
+            inputs, labels = Variable(togpu(inputs)), Variable(togpu(labels))
+            
+            val_outputs = net(inputs)
+            val_loss_size = loss(val_outputs, labels)
+            total_val_loss += val_loss_size.data.item()
+            
+        print("Validation loss = {:.2f}".format(total_val_loss / len(val_loader)))
+        if (total_val_loss / len(val_loader)) < min_val_loss:
+            print("New best: ({} -> {})".format(min_val_loss, total_val_loss / len(val_loader)))
+            min_val_loss = total_val_loss / len(val_loader)
+            torch.save(net.state_dict(), "malaria_best.pt")
+                                
+        
+        
+    print("Training finished, took {:.2f}s".format(time.time() - training_start_time))
+```
+Pretraining attributes are set that includes label and data.
+
+```
+CNN = togpu(MalariaCNN())
+trainNet(CNN, batch_size=64, n_epochs=25, learning_rate=0.002)
+```
+Training batch is deployed using CNN model for 25 iterations with a batch size of 64.
 
 __________________________________________________________________________________________________
 # Deploying CNN model to webapp.
