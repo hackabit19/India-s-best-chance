@@ -47,10 +47,9 @@ Traditionally, when patient is suspected to be diagnosed with malaria doctor col
 
 However, Wee-scope is able to diagnose malaria instantly within minutes with the help of machine learning which in retrospect decreases the human resource therby cutting the cost. Here is the cost of malaria dignosis kit provided by Wee-scope
 
-Giemsa Stain - 100ml  (9ml is required to process 15 slides, therefore 1500/9 = 167 Patients)
-Hemoglobin reducer - 100ml
+Giemsa Stain - 100ml  (9ml is required to process 15 slides, therefore 1500/9 = 167 Patients | Rs 278)
 Slides - 167 slides (One slide = Rs2 | 167 x 2 = Rs334)
-Lancets - 167 (167 x 0.6 = 100)
+Lancets - 167 (167 x 0.6 = Rs 100)
 
 Total = Rs 712 | For 167 Patients
 Avg. Time for report generation = ~15 minutes (For single patient)
