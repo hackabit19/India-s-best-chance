@@ -153,6 +153,103 @@ title("Image size and shape distribution.")
 ```
 What the above code does is create a table showing the distribution of image shapes / sizes.
 
+```
+from torchvision.transforms import transforms
+from torch.utils.data import Dataset, DataLoader
+from torch.utils.data.sampler import SubsetRandomSampler
+import random
+
+
+data_transforms = {
+    'test': transforms.Compose([transforms.Resize((64, 64)),
+                                 transforms.RandomHorizontalFlip(),
+                                 transforms.RandomRotation(5),
+                                 transforms.ToTensor(),
+                                 transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
+    ]),
+    'train': transforms.Compose([transforms.Resize((64, 64)),
+                                transforms.ToTensor(),
+                                transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
+    ])
+}
+
+
+train_set = torchvision.datasets.ImageFolder(root_path, transform=data_transforms['train'])
+test_set = torchvision.datasets.ImageFolder(root_path, transform=data_transforms['test'])
+
+num_train = len(train_set)
+indices = list(range(num_train))
+np.random.shuffle(indices)
+
+valid_size = 0.2 # 20% of images used for validation
+test_size = 0.1 # 10% of images used for testing.
+
+start_valid = int(num_train - (num_train * valid_size + test_size))
+start_test = int(num_train - (num_train * test_size))
+
+train_sampler = SubsetRandomSampler(indices[0:start_valid])
+val_sampler = SubsetRandomSampler(indices[start_valid:start_test])
+test_sampler = SubsetRandomSampler(indices[start_test:])
+```
+
+Two data sets are created, namely test and train these images are resized to standard size 64x64 and RGB values are normalized to 0.5
+
+```
+def togpu(x):
+    return x.cuda()
+def tocpu(x):
+    return x.cpu()
+```
+GPU and CPU are set up for training, namely CUDA library of Nvidia.
+
+```
+from torch.autograd import Variable
+import torch.nn.functional as F
+
+# Now we get to the CNN
+class MalariaCNN(torch.nn.Module):
+    
+    def __init__(self):
+        super(MalariaCNN, self).__init__()
+        
+        # The shape of the images are 64 x 64 x 3
+        self.conv1 = torch.nn.Conv2d(in_channels=3, out_channels=64, kernel_size=3, padding=1)
+        self.conv2 = torch.nn.Conv2d(in_channels=64, out_channels=64, kernel_size=3, padding=1)
+        
+        # After pooling the images should be 16 x 16
+        self.fc1 = torch.nn.Linear(in_features=(64 * 16 * 16), out_features=1024)
+        self.fc2 = torch.nn.Linear(in_features=1024, out_features=64)
+        self.fc3 = torch.nn.Linear(in_features=64, out_features=2)
+        
+    def forward(self, x):
+        
+       
+        x = F.relu(self.conv1(x))
+        
+        
+        x = F.max_pool2d(x, 2)
+
+        x = F.relu(self.conv2(x))
+        
+       
+        x = F.max_pool2d(x, 2)
+        
+        x = x.reshape(-1, 64 * 16 * 16)
+        
+       
+        x = F.relu(self.fc1(x))
+        
+       
+        x = F.relu(self.fc2(x))
+        
+     
+        x = self.fc3(x)
+        
+        return x
+ ```
+ Convulation is performed here, in conv1 size changes from (3, 64, 64) to (64, 64, 64)
+
+
 __________________________________________________________________________________________________
 # Deploying CNN model to webapp.
 
