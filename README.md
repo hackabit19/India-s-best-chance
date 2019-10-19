@@ -81,6 +81,48 @@ The purple color dots you see in the below images are malaria parasites.
 
 ![blood-in-wee2](https://i.imgur.com/4yUqUPk.jpg)
 
+# SOFTWARE IMPLEMENTATION
+# Back-End
+
+We are implementing our Back end on PyTorch and we are deploying it on Google Colab.
+
+`!wget https://ceb.nlm.nih.gov/proj/malaria/cell_images.zip`
+
+To train our machine we used the dataset of 27,558 images. This dataset contains two folders, one containing infected samples and the other contains the uninfected ones. National Library of Medicine has provided this dataset. 
+
+`!unzip cell_images.zip`
+
+Since the dataset is downloaded in Zip format We use this command to unzip the dataset.
+
+```
+import numpy as np
+import pandas as pd
+import os
+import PIL
+import torch
+import torchvision
+from matplotlib.pyplot import *
+import skimage.io
+
+root_path = "/content/cell_images"
+uninfected_cell_images = os.listdir(root_path + "/Uninfected")
+infected_cell_images = os.listdir(root_path + "/Parasitized")
+healthy_im = skimage.io.imread(os.path.join(root_path, "Uninfected", uninfected_cell_images[0]))
+unhealthy_im = skimage.io.imread(os.path.join(root_path, "Parasitized", infected_cell_images[0]))
+
+figure(figsize=(15, 10))
+
+subplot(1, 2, 1)
+title("Healthy")
+imshow(healthy_im)
+xticks([]);yticks([]);
+
+subplot(1, 2, 2)
+title("Unhealthy")
+imshow(unhealthy_im)
+xticks([]);yticks([]);
+
+```
 
 
 
